@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <body>
-    <h1>Hello Worlddddddddd</h1>
+    <h1>Hello World!</h1>
     <!-- Div to display logs -->
     <div id="logContainer">
       <h2>Event Logs</h2>
@@ -9,17 +9,36 @@
     </div>
 
     <script>
-      // Function to log events and display them on the website
+      // Function to log events, display them on the website, and persist in local storage
       function logEvent(eventType, details) {
-        // Display the log on the webpage
-        var logsElement = document.getElementById('logs');
-        var logItem = document.createElement('li');
-        logItem.textContent = `[${new Date().toISOString()}] ${eventType}: ${JSON.stringify(details)}`;
+        const logsElement = document.getElementById('logs');
+        const logItem = document.createElement('li');
+        const logText = `[${new Date().toISOString()}] ${eventType}: ${JSON.stringify(details)}`;
+        logItem.textContent = logText;
         logsElement.appendChild(logItem);
+
+        // Store the log in Local Storage
+        const logs = JSON.parse(localStorage.getItem('logs')) || [];
+        logs.push(logText);
+        localStorage.setItem('logs', JSON.stringify(logs));
+      }
+
+      // Function to load logs from Local Storage on page load
+      function loadLogs() {
+        const logs = JSON.parse(localStorage.getItem('logs')) || [];
+        const logsElement = document.getElementById('logs');
+        logs.forEach(logText => {
+          const logItem = document.createElement('li');
+          logItem.textContent = logText;
+          logsElement.appendChild(logItem);
+        });
       }
 
       // Example usage to log an event
       logEvent('page_load', { message: 'Page loaded successfully.' });
+
+      // Load logs from Local Storage when the page loads
+      loadLogs();
 
       // Creating an XMLHttpRequest to fetch data from a URL
       var xhr = new XMLHttpRequest();
@@ -30,7 +49,7 @@
           // Log the response from the request using the logEvent function
           logEvent('xhr_response', { responseText: xhr.responseText });
         }
-      }
+      };
 
       xhr.open('GET', url, true);
       xhr.withCredentials = true;

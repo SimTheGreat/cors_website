@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <body>
-    <h1>Hello World! h h h</h1>
+    <h1>Hello World!</h1>
     <!-- Div to display logs -->
     <div id="logContainer">
       <h2>Event Logs</h2>
@@ -14,15 +14,18 @@
         const logsElement = document.getElementById('logs');
         const logText = `[${new Date().toISOString()}] ${eventType}: ${JSON.stringify(details)}`;
 
-        // Add new log to the UI
-        const logItem = document.createElement('li');
-        logItem.textContent = logText;
-        logsElement.appendChild(logItem);
-
-        // Update logs in Local Storage
+        // Check if log already exists in local storage
         const logs = JSON.parse(localStorage.getItem('logs')) || [];
-        logs.push(logText);
-        localStorage.setItem('logs', JSON.stringify(logs));
+        if (!logs.includes(logText)) {  // Avoid duplicate logs
+          // Add new log to the UI
+          const logItem = document.createElement('li');
+          logItem.textContent = logText;
+          logsElement.appendChild(logItem);
+
+          // Update logs in Local Storage
+          logs.push(logText);
+          localStorage.setItem('logs', JSON.stringify(logs));
+        }
       }
 
       // Function to load logs from Local Storage and display them on the page
@@ -53,7 +56,7 @@
         xhr.onreadystatechange = function() {
           if (xhr.readyState == XMLHttpRequest.DONE) {
             // Log the response from the request using the logEvent function
-            logEvent('xhr_response', { responseText: xhr.responseText });
+            logEvent('xhr_response', { responseText: xhr.responseText + ' - ' + new Date().toISOString() }); // Added timestamp to differentiate logs
           }
         };
 
@@ -67,5 +70,3 @@
     </script>
   </body>
 </html>
-
-

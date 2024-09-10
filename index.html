@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <body>
-    <h1>Hello World!</h1>
+    <h1>Hello World! h h h</h1>
     <!-- Div to display logs -->
     <div id="logContainer">
       <h2>Event Logs</h2>
@@ -12,21 +12,26 @@
       // Function to log events, display them on the website, and persist in local storage
       function logEvent(eventType, details) {
         const logsElement = document.getElementById('logs');
-        const logItem = document.createElement('li');
         const logText = `[${new Date().toISOString()}] ${eventType}: ${JSON.stringify(details)}`;
+
+        // Add new log to the UI
+        const logItem = document.createElement('li');
         logItem.textContent = logText;
         logsElement.appendChild(logItem);
 
-        // Store the log in Local Storage
+        // Update logs in Local Storage
         const logs = JSON.parse(localStorage.getItem('logs')) || [];
         logs.push(logText);
         localStorage.setItem('logs', JSON.stringify(logs));
       }
 
-      // Function to load logs from Local Storage on page load
+      // Function to load logs from Local Storage and display them on the page
       function loadLogs() {
         const logs = JSON.parse(localStorage.getItem('logs')) || [];
         const logsElement = document.getElementById('logs');
+        logsElement.innerHTML = '';  // Clear current logs to prevent duplication
+
+        // Add logs from Local Storage to the UI
         logs.forEach(logText => {
           const logItem = document.createElement('li');
           logItem.textContent = logText;
@@ -34,26 +39,31 @@
         });
       }
 
-      // Example usage to log an event
-      logEvent('page_load', { message: 'Page loaded successfully.' });
-
       // Load logs from Local Storage when the page loads
       loadLogs();
 
-      // Creating an XMLHttpRequest to fetch data from a URL
-      var xhr = new XMLHttpRequest();
-      var url = "https://stage.tam.ch/kue";
+      // Example usage to log an event on page load
+      logEvent('page_load', { message: 'Page loaded successfully.' });
 
-      xhr.onreadystatechange = function() {
-        if (xhr.readyState == XMLHttpRequest.DONE) {
-          // Log the response from the request using the logEvent function
-          logEvent('xhr_response', { responseText: xhr.responseText });
-        }
-      };
+      // Function to send an XMLHttpRequest to a URL and log the response
+      function sendRequest() {
+        var xhr = new XMLHttpRequest();
+        var url = "https://stage.tam.ch/kue";
 
-      xhr.open('GET', url, true);
-      xhr.withCredentials = true;
-      xhr.send(null);
+        xhr.onreadystatechange = function() {
+          if (xhr.readyState == XMLHttpRequest.DONE) {
+            // Log the response from the request using the logEvent function
+            logEvent('xhr_response', { responseText: xhr.responseText });
+          }
+        };
+
+        xhr.open('GET', url, true);
+        xhr.withCredentials = true;
+        xhr.send(null);
+      }
+
+      // Send the request on page load
+      sendRequest();
     </script>
   </body>
 </html>
